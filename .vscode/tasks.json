@@ -8,7 +8,7 @@
         "kind": "build",
         "isDefault": true
       },
-      "command": "/usr/local/bin/processing-java",
+      "command": "/home/takeru/Application/processing-3.5.4/processing-java",
       // "command": "C:\\Program Files (x86)\\processing-3.5.3\\processing-java",
       "presentation": {
         "echo": true,

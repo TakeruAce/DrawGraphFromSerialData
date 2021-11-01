@@ -3,7 +3,7 @@ import controlP5.*;
 Serial myPort;
 boolean flg_start = false;
 String str_format = "myo,val1,val2";
-String port = "/dev/cu.usbmodem66090101";
+String port = "/dev/ttyACM0";
 // String port = "COM5";
 boolean isSerialAvalable = false;
 String header = "vector";
@@ -17,7 +17,7 @@ int CORRECT_DATA_NUM = 0;
 boolean CORRECT_DATA_NUM_FLAG = false;
 ArrayList<ArrayList<Float>> data;
 graphMonitor testGraph;
-color colorArray[] = {#058ED9, #483D3F,#E3B44D, #A39A92, #23CE6B, #77685D, #BA6E6E, #DF2935,#DA7422};
+color colorArray[] = {#058ED9, #483D3F,#E3B44D, #A39A92, #23CE6B, #77685D, #BA6E6E, #DF2935, #DA7422};
 ArrayList<Float> slider_amp_ratio;
 ControlP5 cp5;
 int start_t;
@@ -56,11 +56,11 @@ void setup() {
      .addButton("send",0,1500, 150,100,20);
    testGraph = new graphMonitor("N-channel Serial Plotter", 100, 50, 1000, 400, GRAPH_DATA_NUM,TIME_RANGE_FOR_GRAPH);
    for(int i_data=0;i_data<GRAPH_DATA_NUM;i_data++) {
-     slider_amp_ratio.add(1f);
+     slider_amp_ratio.add(0f);
     cp5
     .addSlider("ampslider"+i_data)
     .setRange(-10,10)
-    .setPosition(50 + 120* i_data,530)
+    .setPosition(50 + 120* i_data,500)
     .setSize(100,20)
     .setNumberOfTickMarks(201)
     .setValue(slider_amp_ratio.get(i_data))
@@ -68,9 +68,18 @@ void setup() {
     .setColorActive(colorArray[i_data]);
 
     cp5.addCheckBox("checkbox"+i_data)
-    .setPosition(50 + 120 * i_data, 500)
+    .setPosition(50 + 120 * i_data, 560)
     .setSize(20,20)
     .addItem("data : " + i_data,0)
+    .setColorLabels(colorArray[i_data])
+    .setColorActive(colorArray[i_data])
+    .setColorForeground(colorArray[i_data])
+    .activate(0);
+
+    cp5.addCheckBox("reversed"+i_data)
+    .setPosition(50 + 120 * i_data, 530)
+    .setSize(20,20)
+    .addItem("reversed : " + i_data,0)
     .setColorLabels(colorArray[i_data])
     .setColorActive(colorArray[i_data])
     .setColorForeground(colorArray[i_data])
@@ -88,7 +97,7 @@ void setup() {
   cp5.addButton("signalPrefSend",0,1500, 250,100,20);
   cp5
   .addSlider("signalAmp")
-  .setRange(0.0,2000)
+  .setRange(0.0,10)
   .setPosition(1200,200)
   .setSize(200,20)
   .setNumberOfTickMarks(101)
@@ -282,9 +291,13 @@ class graphMonitor {
           if ((int)cp5.getGroup("checkbox"+(i_data-1)).getController("data : " + (i_data-1)).getValue() == 1) {
             stroke(colorArray[i_data-1]);
             line((y.get(i_t).get(0) - oldestTime) / TIME_RANGE * X_LENGTH ,
-                  y.get(i_t).get(i_data) * (Y_LENGTH / 2) / maxRange * cp5.getController("ampslider"+(i_data-1)).getValue(),
+                  y.get(i_t).get(i_data)
+                   * (Y_LENGTH / 2) / maxRange * (float)Math.pow(10, cp5.getController("ampslider"+(i_data-1)).getValue())
+                   * ((int)cp5.getGroup("reversed"+(i_data-1)).getController("reversed : " + (i_data-1)).getValue() == 1 ? 1 : -1),
                  (y.get(i_t+1).get(0) - oldestTime) / TIME_RANGE * X_LENGTH, 
-                  y.get(i_t+1).get(i_data) * (Y_LENGTH / 2) / maxRange *  cp5.getController("ampslider"+(i_data-1)).getValue());
+                  y.get(i_t+1).get(i_data) * (Y_LENGTH / 2) / maxRange
+                  *  (float)Math.pow(10, cp5.getController("ampslider"+(i_data-1)).getValue()) 
+                  * ((int)cp5.getGroup("reversed"+(i_data-1)).getController("reversed : " + (i_data-1)).getValue() == 1 ? 1 : -1)) ;
           }
         }
       }
