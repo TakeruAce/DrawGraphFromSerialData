@@ -349,5 +349,5 @@ void signalPrefSend() {
 
   void saveFrameAsPNG() {
     PImage saveImage = get(0, 0, 1200, 500);
-    saveImage.save("data/screenshot"+ day() +"-"+ hour() + "-" + minute() + "-" + second() +".png");
+    saveImage.save("data/screenshot"+ month() +"-" + day() +"-"+ hour() + "-" + minute() + "-" + second() +".png");
   }

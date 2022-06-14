@@ -368,7 +368,7 @@ public void signalPrefSend() {
 
   public void saveFrameAsPNG() {
     PImage saveImage = get(0, 0, 1200, 500);
-    saveImage.save("data/screenshot"+ day() +"-"+ hour() + "-" + minute() + "-" + second() +".png");
+    saveImage.save("data/screenshot"+ month() +"-" + day() +"-"+ hour() + "-" + minute() + "-" + second() +".png");
   }
   public void settings() {  size(1700, 700, P3D);  smooth(); }
   static public void main(String[] passedArgs) {
